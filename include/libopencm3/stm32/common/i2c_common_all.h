@@ -359,32 +359,134 @@ specific memorymap.h header before including this header file.*/
 #define I2C_READ			1
 /**@}*/
 
-/* --- I2C function prototypes---------------------------------------------- */
-
 BEGIN_DECLS
+
+/* --- I2C inline functions ---------------------------------------------- */
+
+/*---------------------------------------------------------------------------*/
+/** @brief I2C Send Start Condition.
+
+    If in Master mode this will cause a restart condition to occur at the end of the
+    current transmission. If in Slave mode, this will initiate a start condition
+    when the current bus activity is completed.
+
+    @param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
+*/
+
+static inline void i2c_send_start(uint32_t i2c)
+{
+  I2C_CR1(i2c) |= I2C_CR1_START;
+}
+
+/*---------------------------------------------------------------------------*/
+/** @brief I2C Send Stop Condition.
+
+    After the current byte transfer this will initiate a stop condition if in Master
+    mode, or simply release the bus if in Slave mode.
+
+    @param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
+*/
+
+static inline void i2c_send_stop(uint32_t i2c)
+{
+  I2C_CR1(i2c) |= I2C_CR1_STOP;
+}
+
+/*---------------------------------------------------------------------------*/
+/** @brief I2C Clear Stop Flag.
+
+    Clear the "Send Stop" flag in the I2C config register
+
+    @param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
+*/
+static inline void i2c_clear_stop(uint32_t i2c)
+{
+  I2C_CR1(i2c) &= ~I2C_CR1_STOP;
+}
+
+/*---------------------------------------------------------------------------*/
+/** @brief I2C Get Data.
+
+    @param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
+*/
+static inline uint8_t i2c_get_data(uint32_t i2c)
+{
+  return I2C_DR(i2c) & 0xff;
+}
+
+/*---------------------------------------------------------------------------*/
+/** @brief I2C Send Data.
+
+    @param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
+    @param[in] data Unsigned int8. Byte to send.
+*/
+
+static inline void i2c_send_data(uint32_t i2c, uint8_t data)
+{
+  I2C_DR(i2c) = data;
+}
+
+/*---------------------------------------------------------------------------*/
+/** @brief I2C Enable ACK
+
+    Enables acking of own 7/10 bit address
+    @param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
+*/
+static inline void i2c_enable_ack(uint32_t i2c)
+{
+  I2C_CR1(i2c) |= I2C_CR1_ACK;
+}
+
+/*---------------------------------------------------------------------------*/
+/** @brief I2C Disable ACK
+
+    Disables acking of own 7/10 bit address
+    @param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
+*/
+static inline void i2c_disable_ack(uint32_t i2c)
+{
+  I2C_CR1(i2c) &= ~I2C_CR1_ACK;
+}
+
+/*---------------------------------------------------------------------------*/
+/** @brief I2C NACK Next Byte
+
+    Causes the I2C controller to NACK the reception of the next byte
+    @param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
+*/
+static inline void i2c_nack_next(uint32_t i2c)
+{
+  I2C_CR1(i2c) |= I2C_CR1_POS;
+}
+
+/*---------------------------------------------------------------------------*/
+/** @brief I2C NACK Next Byte
+
+    Causes the I2C controller to NACK the reception of the current byte
+
+    @param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
+*/
+static inline void i2c_nack_current(uint32_t i2c)
+{
+  I2C_CR1(i2c) &= ~I2C_CR1_POS;
+}
+
+
+/* --- I2C function prototypes---------------------------------------------- */
 
 void i2c_reset(uint32_t i2c);
 void i2c_peripheral_enable(uint32_t i2c);
 void i2c_peripheral_disable(uint32_t i2c);
-void i2c_send_start(uint32_t i2c);
-void i2c_send_stop(uint32_t i2c);
-void i2c_clear_stop(uint32_t i2c);
 void i2c_set_own_7bit_slave_address(uint32_t i2c, uint8_t slave);
 void i2c_set_own_10bit_slave_address(uint32_t i2c, uint16_t slave);
 void i2c_set_clock_frequency(uint32_t i2c, uint8_t freq);
-void i2c_send_data(uint32_t i2c, uint8_t data);
 void i2c_set_fast_mode(uint32_t i2c);
 void i2c_set_standard_mode(uint32_t i2c);
 void i2c_set_ccr(uint32_t i2c, uint16_t freq);
 void i2c_set_trise(uint32_t i2c, uint16_t trise);
 void i2c_send_7bit_address(uint32_t i2c, uint8_t slave, uint8_t readwrite);
-uint8_t i2c_get_data(uint32_t i2c);
 void i2c_enable_interrupt(uint32_t i2c, uint32_t interrupt);
 void i2c_disable_interrupt(uint32_t i2c, uint32_t interrupt);
-void i2c_enable_ack(uint32_t i2c);
-void i2c_disable_ack(uint32_t i2c);
-void i2c_nack_next(uint32_t i2c);
-void i2c_nack_current(uint32_t i2c);
 void i2c_set_dutycycle(uint32_t i2c, uint32_t dutycycle);
 void i2c_enable_dma(uint32_t i2c);
 void i2c_disable_dma(uint32_t i2c);

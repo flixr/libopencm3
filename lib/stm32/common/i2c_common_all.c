@@ -89,47 +89,6 @@ void i2c_peripheral_disable(uint32_t i2c)
 }
 
 /*---------------------------------------------------------------------------*/
-/** @brief I2C Send Start Condition.
-
-If in Master mode this will cause a restart condition to occur at the end of the
-current transmission. If in Slave mode, this will initiate a start condition
-when the current bus activity is completed.
-
-@param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
-*/
-
-void i2c_send_start(uint32_t i2c)
-{
-	I2C_CR1(i2c) |= I2C_CR1_START;
-}
-
-/*---------------------------------------------------------------------------*/
-/** @brief I2C Send Stop Condition.
-
-After the current byte transfer this will initiate a stop condition if in Master
-mode, or simply release the bus if in Slave mode.
-
-@param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
-*/
-
-void i2c_send_stop(uint32_t i2c)
-{
-	I2C_CR1(i2c) |= I2C_CR1_STOP;
-}
-
-/*---------------------------------------------------------------------------*/
-/** @brief I2C Clear Stop Flag.
-
-Clear the "Send Stop" flag in the I2C config register
-
-@param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
-*/
-void i2c_clear_stop(uint32_t i2c)
-{
-	I2C_CR1(i2c) &= ~I2C_CR1_STOP;
-}
-
-/*---------------------------------------------------------------------------*/
 /** @brief I2C Set the 7 bit Slave Address for the Peripheral.
 
 This sets an address for Slave mode operation, in 7 bit form.
@@ -180,18 +139,6 @@ void i2c_set_clock_frequency(uint32_t i2c, uint8_t freq)
 	reg16 = I2C_CR2(i2c) & 0xffc0; /* Clear bits [5:0]. */
 	reg16 |= freq;
 	I2C_CR2(i2c) = reg16;
-}
-
-/*---------------------------------------------------------------------------*/
-/** @brief I2C Send Data.
-
-@param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
-@param[in] data Unsigned int8. Byte to send.
-*/
-
-void i2c_send_data(uint32_t i2c, uint8_t data)
-{
-	I2C_DR(i2c) = data;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -278,16 +225,6 @@ void i2c_send_7bit_address(uint32_t i2c, uint8_t slave, uint8_t readwrite)
 }
 
 /*---------------------------------------------------------------------------*/
-/** @brief I2C Get Data.
-
-@param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
-*/
-uint8_t i2c_get_data(uint32_t i2c)
-{
-	return I2C_DR(i2c) & 0xff;
-}
-
-/*---------------------------------------------------------------------------*/
 /** @brief I2C Enable Interrupt
 
 @param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
@@ -309,50 +246,7 @@ void i2c_disable_interrupt(uint32_t i2c, uint32_t interrupt)
 	I2C_CR2(i2c) &= ~interrupt;
 }
 
-/*---------------------------------------------------------------------------*/
-/** @brief I2C Enable ACK
 
-Enables acking of own 7/10 bit address
-@param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
-*/
-void i2c_enable_ack(uint32_t i2c)
-{
-	I2C_CR1(i2c) |= I2C_CR1_ACK;
-}
-
-/*---------------------------------------------------------------------------*/
-/** @brief I2C Disable ACK
-
-Disables acking of own 7/10 bit address
-@param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
-*/
-void i2c_disable_ack(uint32_t i2c)
-{
-	I2C_CR1(i2c) &= ~I2C_CR1_ACK;
-}
-
-/*---------------------------------------------------------------------------*/
-/** @brief I2C NACK Next Byte
-
-Causes the I2C controller to NACK the reception of the next byte
-@param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
-*/
-void i2c_nack_next(uint32_t i2c)
-{
-	I2C_CR1(i2c) |= I2C_CR1_POS;
-}
-
-/*---------------------------------------------------------------------------*/
-/** @brief I2C NACK Next Byte
-
-Causes the I2C controller to NACK the reception of the current byte
-
-@param[in] i2c Unsigned int32. I2C register base address @ref i2c_reg_base.
-*/
-void i2c_nack_current(uint32_t i2c)
-{
-	I2C_CR1(i2c) &= ~I2C_CR1_POS;
-}
 
 /*---------------------------------------------------------------------------*/
 /** @brief I2C Set clock duty cycle
